@@ -7,12 +7,11 @@ class App {
 //        int[][] nums = {{1, 1, 0, 0, 0}, {0, 1, 0, 0, 1}, {1, 0, 0, 1, 1}, {0, 0, 0, 0, 0}, {1, 0, 1, 1, 0}};
         int[][] nums = {{1, 1}, {0, 0}};
 
-        Arrays.stream(nums)
-                .forEach(arr -> System.out.println(Arrays.toString(arr)));
+//        Arrays.stream(nums).forEach(arr -> System.out.println(Arrays.toString(arr)));
 
-        Island island = new Island();
-        int result = island.countIsland(nums);
-        System.out.println(result);
+        CountNeighbours countNeighbours = new CountNeighbours();
+        countNeighbours.countIsland(nums, 0, 0);
+        CountNeighbours.listOfIndexes.forEach(arr -> System.out.println(Arrays.toString(arr)));
 
     }
 }

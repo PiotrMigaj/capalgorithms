@@ -7,7 +7,7 @@ class App {
 
         List<Group> groups = new ArrayList<>();
 
-        String[][] array = {{"A", "A", "A", "B", "C"}, {"B", "A", "D", "E", "M"}, {"U", "A", "F", "L", "M"}, {"G", "F", "V", "L", "M"}, {"G", "F", "V", "X", "M"}};
+        String[][] array = {{"A", "A", "A", "B", "C"}, {"B", "A", "D", "E", "M"}, {"G", "A", "F", "L", "M"}, {"G", "G", "G", "L", "M"}, {"G", "F", "V", "X", "M"}};
 
         Arrays.stream(array).forEach(arr -> System.out.println(Arrays.toString(arr)));
 
@@ -51,12 +51,13 @@ class App {
 
 
         List<Group> anotherGroups = mergeGroups(groups);
-
-        System.out.println(anotherGroups);
+        System.out.println("Merged groups");
+        anotherGroups.forEach(System.out::println);
 
     }
 
     public static List<Group> mergeGroups(List<Group> input) {
+
         input.forEach(System.out::println);
         if (input.isEmpty()) {
             return Collections.emptyList();
@@ -88,6 +89,74 @@ class App {
         set.addAll(group2.getCoordinates());
         return set.size() != (group1.getCoordinates().size() + group2.getCoordinates().size());
     }
+
+    public static List<Group> mergeGroups2(List<Group> input) {
+        System.out.println("Input list");
+        input.forEach(System.out::println);
+        Stack<Group> stack = new Stack<>();
+        if (input.isEmpty()) {
+            return Collections.emptyList();
+        }
+        if (input.size() == 1) {
+            return new ArrayList<>(input);
+        }
+        for (int i = 0; i < input.size(); i++) {
+            Group baseGroup = input.get(i);
+
+            int counter = 0;
+            for (int j = i + 1; j < input.size(); j++) {
+                Group mergeGroup = input.get(j);
+                if (!canGroupsBeMerged(baseGroup, mergeGroup)) {
+                    counter++;
+                }
+            }
+            if (counter == (input.size() - i - 1)) {
+                if (stack.isEmpty()) {
+                    stack.add(baseGroup);
+                } else {
+                    int counter2 = 0;
+                    for (Group g : stack) {
+                        if (g.getCoordinates().containsAll(baseGroup.getCoordinates())) {
+                            counter2++;
+                        }
+                    }
+                    if (counter2 == 0) {
+                        stack.add(baseGroup);
+                    }
+                }
+            }
+            for (int j = i + 1; j < input.size(); j++) {
+                Group mergeGroup = input.get(j);
+                if (!canGroupsBeMerged(baseGroup, mergeGroup)) {
+                    continue;
+                }
+                Group combineGroup = new Group(baseGroup.getType());
+                if (stack.isEmpty()) {
+                    combineGroup.getCoordinates().addAll(baseGroup.getCoordinates());
+                    combineGroup.getCoordinates().addAll(mergeGroup.getCoordinates());
+                    stack.add(combineGroup);
+                    System.out.println("Combined group");
+                    System.out.println(combineGroup);
+                } else {
+                    Group poppedGroup = stack.pop();
+                    if (poppedGroup.getCoordinates().containsAll(baseGroup.getCoordinates())) {
+                        poppedGroup.getCoordinates().addAll(mergeGroup.getCoordinates());
+                        stack.add(poppedGroup);
+                    } else {
+                        stack.add(poppedGroup);
+                        combineGroup.getCoordinates().addAll(baseGroup.getCoordinates());
+                        combineGroup.getCoordinates().addAll(mergeGroup.getCoordinates());
+                        stack.add(combineGroup);
+                    }
+                }
+
+            }
+        }
+        System.out.println("Stacked list");
+        stack.forEach(System.out::println);
+        return new ArrayList<>(stack);
+    }
+
 }
 
 class Group {
